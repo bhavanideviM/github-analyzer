@@ -21,6 +21,11 @@ app = FastAPI()
 
 GITHUB_API = "https://api.github.com"
 
+import os
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+
+
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -75,6 +80,10 @@ async def analyze(request: Request):
     headers = {
         "Accept": "application/vnd.github+json"
     }
+
+    if GITHUB_TOKEN:
+        headers["Authorization"] = f"token {GITHUB_TOKEN}"
+
 
     async with aiohttp.ClientSession(headers=headers) as session:
         while True:
