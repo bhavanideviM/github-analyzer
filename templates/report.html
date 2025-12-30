@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Summary for {{ username }}</h3>
+
+<p>Total repositories: {{ summary.total_repos }}</p>
+
+<h4>Top Starred Repositories</h4>
+<ul>
+{% for name, stars in summary.top_starred %}
+  <li>{{ name }} - ⭐ {{ stars }}</li>
+{% endfor %}
+</ul>
+
+<a href="/results/{{ username }}">Back</a>
+{% endblock %}

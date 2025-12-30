@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Results for {{ username }}</h3>
+
+<ul>
+{% for repo in repos %}
+  <li>{{ repo.name }} - ⭐ {{ repo.stars }}</li>
+{% endfor %}
+</ul>
+
+<a href="/report/{{ username }}">View Summary Report</a>
+{% endblock %}

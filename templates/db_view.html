@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Repository Table</h3>
+<table border="1">
+<tr>
+<th>Name</th><th>Stars</th><th>Forks</th><th>Language</th>
+</tr>
+{% for r in rows %}
+<tr>
+<td>{{r[0]}}</td><td>{{r[1]}}</td><td>{{r[2]}}</td><td>{{r[3]}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

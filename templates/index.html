@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>GitHub Analyzer</h2>
+
+<form action="/analyze" method="post">
+    <input type="text" name="username" placeholder="GitHub Username" required>
+    <button type="submit">Analyze</button>
+</form>
+{% endblock %}

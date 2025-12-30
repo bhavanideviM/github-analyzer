@@ -1,0 +1,14 @@
+body {
+    background-color: #f4f6f8;
+    font-family: Arial, sans-serif;
+}
+
+.card {
+    border-radius: 8px;
+}
+
+#loader {
+    text-align: center;
+    padding: 12px;
+    font-weight: bold;
+}
