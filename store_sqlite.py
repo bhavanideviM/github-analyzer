@@ -58,13 +58,13 @@ def insert_repos(username: str, repos: List[Dict]):
         rows.append((
             username,
             r.get("name"),
-            r.get("html_url"),
-            r.get("stargazers_count", 0),
-            r.get("forks_count", 0),
+            r.get("url"),
+            r.get("stars", 0),
+            r.get("forks", 0),
             r.get("language"),
-            r.get("created_at"),
-            r.get("updated_at"),
-            r.get("description")
+            None,  # created
+            None,  # updated
+            None   # description
         ))
 
     cur.executemany("""

@@ -72,16 +72,36 @@ async def analyze(request: Request):
     all_repos = []
     page = 1
 
-    async with aiohttp.ClientSession() as session:
+    headers = {
+        "Accept": "application/vnd.github+json"
+    }
+
+    async with aiohttp.ClientSession(headers=headers) as session:
         while True:
             url = f"{GITHUB_API}/users/{username}/repos?per_page=100&page={page}&sort=updated"
-            async with session.get(url) as r:
-                data = await r.json()
+
+            async with session.get(url) as resp:
+                if resp.status != 200:
+                    text = await resp.text()
+                    raise Exception(f"GitHub API Error: {resp.status} - {text}")
+
+                data = await resp.json()
+
+            # ❗ SAFETY CHECK
+            if not isinstance(data, list):
+                raise Exception(f"Invalid API response: {data}")
 
             if not data:
                 break
 
-            all_repos.extend(data)
+            for repo in data:
+                all_repos.append({
+                    "name": repo.get("name"),
+                    "stars": repo.get("stargazers_count", 0),
+                    "forks": repo.get("forks_count", 0),
+                    "language": repo.get("language"),
+                    "url": repo.get("html_url")
+                })
 
             if len(data) < 100:
                 break
