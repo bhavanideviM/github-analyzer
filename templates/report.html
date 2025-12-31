@@ -6,6 +6,10 @@
 <p>Total repositories: {{ summary.total_repos }}</p>
 
 <h4>Top Starred Repositories</h4>
+<a href="/download/{{ username }}/csv" class="btn btn-success">
+    ⬇ Download All Repos as CSV
+</a>
+
 <ul>
 {% for name, stars in summary.top_starred %}
   <li>{{ name }} - ⭐ {{ stars }}</li>
