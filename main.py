@@ -9,7 +9,7 @@ from store_sqlite import insert_repos, clear_repos_by_user
 import sqlite3
 from fastapi.responses import HTMLResponse
 
-
+import os
 
 from fetch_repos import fetch_all_repos
 from process_repos import extract_repo_info
@@ -39,35 +39,7 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-# @app.post("/analyze")
-# async def analyze(request: Request, username: str = Form(...)):
-#     """Trigger fetching and processing of a user's repos and redirect to results page."""
-#     username = username.strip()
-#     if not username:
-#         raise HTTPException(status_code=400, detail="username required")
 
-
-#     # Clear any previous data for same user (optional)
-#     clear_repos_by_user(username)
-
-
-#     # Fetch all repos from GitHub (may take time depending on repo count)
-#     repos = await fetch_all_repos(username)
-
-
-#     if not repos:
-#     # still redirect to results page which shows "no repos"
-#         return RedirectResponse(url=f"/results/{username}", status_code=303)
-
-
-#     processed = extract_repo_info(repos, username)
-#     # insert_repos(processed)
-#     clear_repos_by_user(username)
-#     insert_repos(username, processed)
-
-
-
-#     return RedirectResponse(url=f"/results/{username}", status_code=303)
 
 @app.post("/analyze")
 async def analyze(request: Request):
@@ -162,7 +134,11 @@ async def db_view(request: Request):
 
 @app.get("/download/{username}/{fmt}")
 async def download(username: str, fmt: str):
-    """Serve JSON or CSV export created on-the-fly from SQLite."""
     from report import export_user_repos
+
     path = export_user_repos(username, fmt)
-    return FileResponse(path, filename=path.split('/')[-1])
+
+    if not path or not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="No data found to export")
+
+    return FileResponse(path, filename=os.path.basename(path))

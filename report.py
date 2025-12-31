@@ -4,7 +4,7 @@ import csv
 import json
 from typing import Tuple, List, Dict
 from store_sqlite import get_conn
-
+import os
 
 
 
@@ -64,15 +64,27 @@ def get_repos_page(username: str, page: int = 1, per_page: int = 10) -> Tuple[Li
 
 
 def export_user_repos(username: str, fmt: str = "json") -> str:
-    """Export repos for username as JSON or CSV. Returns path to the created file."""
-    data, _ = get_repos_page(username, page=1, per_page=10**6) # get all
+    data, _ = get_repos_page(username, page=1, per_page=10**6)
+
+    if not data:
+        return None
+
+    os.makedirs("exports", exist_ok=True)
+
     safe_user = username.replace("/", "_")
+
     if fmt == "csv":
-        path = f"{safe_user}_repos.csv"
-        keys = data[0].keys() if data else ["name", "url", "stars", "forks", "language", "created", "updated", "description"]
+        path = f"exports/{safe_user}_repos.csv"
+        keys = data[0].keys()
+
         with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=keys)
             writer.writeheader()
             writer.writerows(data)
+
     else:
-        return path
+        path = f"exports/{safe_user}_repos.json"
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4)
+
+    return path
